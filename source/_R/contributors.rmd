@@ -95,6 +95,7 @@ get_authors <- function(d) {
 	p$p <- gsub("SILVA", "Silva", p$p)
 	p$p <- gsub("SIDA", "Sida", p$p)
 	p$p <- gsub("DESALEGN", "Desalegn", p$p)
+	p$p <- gsub("KAUNDA", "Kaunda", p$p)
 	
 		
 	p$p <- gsub("Cyamweshi, A. R.", "Cyamweshi, Athanase R.", p$p)
@@ -123,12 +124,12 @@ get_authors <- function(d) {
 	p$p <- gsub("S.Manohar, Surendra", "Surendra, S. Manohar", p$p) 
 	p$p <- gsub("V, Murali T", "Murali, T.V.", p$p) 
 	p$p <- gsub("V, Reddy S", "Reddy, S.V.", p$p) 
-	p$p <- gsub("Tijanni, K.", "Tijjani Aliyu, Kamal", p$p) 
+	p$p <- gsub("Tijanni, K.", "Aliyu, Kamaluddin Tijani", p$p) 
 	p$p <- gsub("Gardeazabal, Andrea", "Gardeazábal-Monsalve, Andrea", p$p) 
 	p$p <- gsub("Talabi, A. O.|Talabi, O.A.", "Talabi, A.O.", p$p) 
 	p$p <- gsub("Murrell, Scott", "Murrell, T. Scott", p$p) 
 	p$p <- gsub("Naeve, Seth$", "Naeve, Seth L.", p$p) 
-	p$p <- gsub("Panneerselvam, P$", "Panneerselvam, Peramaiyan", p$p) 
+	p$p <- gsub("Panneerselvam, P$", "Peramaiyan, Panneerselvam", p$p) 
 	p$p <- gsub("Sileshi, G.$", "Sileshi, Gudeta W.", p$p) 
 	p$p <- gsub("Singh K, Deepak", "Singh, Deepak Kumar", p$p) 
 	p$p <- gsub("Pundir, Ajay$", "Pundir, Ajay Kumar", p$p) 
@@ -147,6 +148,41 @@ get_authors <- function(d) {
 	p$p <- gsub("Kamara, Alpha Y.", "Kamara, Alpha", p$p)
 	p$p <- gsub("KUBOJA, Nicholaus", "Kuboja, Nicholaus", p$p)
 	p$p <- gsub("PITTAKI, Zampela", "Pittaki, Zampela", p$p)
+
+	p$p[p$p == "Bolo, Peter"] <- "Bolo, Peter Omondi"
+	p$p[p$p == "Cairns, Jill Elizabeth"] <- "Cairns, Jill E."
+	p$p[p$p == "Perez, Juan"] <- "Perez, Juan Miguel"
+
+	p$p[p$p == "Abilio, Alvaro"] <- "Alvaro, Abilio"
+	p$p[p$p == "Catherine, Acam"] <- "Acam, Catherine"
+	p$p[p$p == "Ibrahim, Ali"] <- "Ali, Ibrahim"
+	p$p[p$p == "Kunihya, Ayuba"] <- "Ayuba, Kunihya"
+	p$p[p$p == "Blessing, Mhlanga"] <- "Mhlanga, Blessing"
+	p$p[p$p == "Christian, Randriamandimbisoa"] <- "Randriamandimbisoa, Christian"
+	p$p[p$p == "Elke, Vandamme"] <- "Vandamme, Elke"
+	p$p[p$p == "Mamadou, Fofana"] <- "Fofana, Mamadou"
+	p$p[p$p == "Wasim, Iftikar"] <- "Iftikar, Wasim"
+	p$p[p$p == "Kalimuthu, Senthilkumar"] <- "Senthilkumar, Kalimuthu"
+	p$p[p$p == "Saito, Kazuki"] <- "Kazuki, Saito"
+	p$p[p$p == "Lameck, Magoye"] <- "Magoye, Lameck"
+	p$p[p$p == "Wivine, Munyahali"] <- "Munyahali, Wivine"
+	p$p[p$p == "Stephen, Musoke"] <- "Musoke, Stephen"
+	p$p[p$p == "Panneerselvam, Peramaiyan"] <- "Peramaiyan, Panneerselvam"
+	p$p[p$p == "Degefie, Degefie Tibebe"] <- "Tibebe, Degefie"
+
+	p$p[p$p == "Aliyu, K.T."] <- "Aliyu, Kamaluddin Tijani"
+	p$p[p$p == "ALIYU, Kamaluddin Tijani"] <- "Aliyu, Kamaluddin Tijani"
+	p$p[p$p == "Aliyu, Kamaluddin, Tijani"] <- "Aliyu, Kamaluddin Tijani"
+	p$p[p$p == "Kamaludeen, Tijjani"] <- "Aliyu, Kamaluddin Tijani"
+	p$p[p$p == "Tijjanni, Kamaluddin"] <- "Aliyu, Kamaluddin Tijani"
+	p$p[p$p == "Tijjani Aliyu, Kamal"] <- "Aliyu, Kamaluddin Tijani"
+
+	p$p[p$p == "Kebede, M"] <- "Kebede, Mesfin"
+	p$p[p$p == "Mesfin, Kebede"] <- "Kebede, Mesfin"
+	p$p[p$p == "Maman, N."] <- "Maman, Nouri"
+	p$p[p$p == "Singh, Maninder P."] <- "Singh, Maninder Pal"
+	p$p[p$p == "Olsen, Michael"] <- "Olsen, Michael Scott"
+	p$p[p$p == "Tondoh, Jerome"] <- "Tondoh, Ebagnerin J."
 
 	tab <- as.data.frame(table(p$p))
 	colnames(tab) <- c("name", "datasets")
@@ -170,10 +206,10 @@ intab$name <- paste0('<a href="data/done.html?org=', intab$name, '">', intab$nam
 
 ### Script authors
 
-The *Carob* scripts were written by the following `r nrow(cartab)` persons:
+The *Carob* scripts were contributed by the following `r nrow(cartab)` persons:
 
 ```{r catable, echo=FALSE}
-cartab[,2][cartab[,2] > 250] <- "250+"
+cartab[,2][cartab[,2] > 300] <- "300+"
 out = paste0(paste0(cartab[,1], " (", cartab[,2], ")"), collapse="; ")
 #kableExtra::kbl(cartab) |> kable_classic(full_width = FALSE) |>
 #   kable_styling(bootstrap_options = c("striped", "hover"))

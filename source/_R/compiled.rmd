@@ -139,7 +139,7 @@ terra::halo(-12000000, -6500000, paste("Carob locations\n  ", cdate), xpd=TRUE, 
 
 <br>
 
-For ease of organization we divide the data into thematic groups. These are not mutually exclusive. For example, the first place to look for crop response to fertilizer data would be in the "agronomy" group. However, the "survey", and "varieties" groups may also contain fertilizer application data. Likewise, the "varieties" group has data for comparing crop varieties, but variety names are also reported in the "agronomy" group. This means that you may want to consider using data from multiple groups. 
+For ease of organization we divide the data into thematic groups. These are not mutually exclusive. For example, the first place to look for crop response to fertilizer data would be in the "agronomy" group. However, the "survey", and "varieties_" groups may also contain fertilizer application data. Likewise, the "varieties_" groups have data for comparing crop varieties, but variety names are also reported in the "agronomy" group. This means that you may want to consider using data from multiple groups. Note that the "varieties_other" groups includes data from multiple crops, perhaps including crops that have their own varieties_* group (e.g. "varieties_wheat").
 
 The table below shows the current groups and the number of original datasets and records in each group. We also show these numbers for the datasets that have a Creative Commons (CC) [license](licenses.html). 
 
