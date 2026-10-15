@@ -17,12 +17,13 @@ Data
 		<option value="pest_disease">pest_disease</option>
 		<option value="soil_samples">soil_samples</option>
 		<option value="survey">survey</option>
-		<option value="varieties">varieties</option>
 		<option value="varieties_cassava">varieties_cassava</option>
 		<option value="varieties_cowpea">varieties_cowpea</option>
 		<option value="varieties_maize">varieties_maize</option>
 		<option value="varieties_potato">varieties_potato</option>
+		<option value="varieties_sorghum">varieties_sorghum</option>
 		<option value="varieties_wheat">varieties_wheat</option>
+		<option value="varieties_other">varieties_other</option>
 		<option value="all">everything</option>
 	</select>
 

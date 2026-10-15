@@ -96,14 +96,15 @@ get_authors <- function(d) {
 	p$p <- gsub("SIDA", "Sida", p$p)
 	p$p <- gsub("DESALEGN", "Desalegn", p$p)
 	p$p <- gsub("KAUNDA", "Kaunda", p$p)
+	p$p <- gsub("AHMED, MUKHTAR", "Ahmed, Mukthar", p$p)
+	p$p <- gsub("MADAGA", "Madaga", p$p)
 	
-		
 	p$p <- gsub("Cyamweshi, A. R.", "Cyamweshi, Athanase R.", p$p)
 	p$p <- gsub("))", ")", p$p)
 	p$p[p$p == "World Agroforestry (ICRAF)"] <- "World Agroforestry Center (ICRAF)"
 	p$p <- gsub("Zambian Agriculture Research Institute", "Zambia Agricultural Research Institute", p$p)
 		
-	p <- p[!grepl("ABC|International Center|Alliance of Bioversity|CIAT|Institut|ILRI|IFPRI|IRRI|IWMI|CIMMYT|ICRISAT|IITA|ICRAF|ISRIC|LUANAR|TARI|MSU|Ministry|SARI|University|ZARI|CRS|TLC", p$p), ]
+	p <- p[!grepl("ABC|International Center|Alliance of Bioversity|SRFSI-BARI Scientists|CIAT|Institut|ILRI|IFPRI|IRRI|IWMI|CIMMYT|ICRISAT|IITA|ICRAF|ISRIC|LUANAR|TARI|MSU|Ministry|SARI|University|ZARI|CRS|TLC", p$p), ]
 	p$p <- gsub("  ", " ", p$p)
 	p$p <- trimws(p$p)
 	p <- p[p$p !="", ]
@@ -188,7 +189,7 @@ get_authors <- function(d) {
 	colnames(tab) <- c("name", "datasets")
 	tab$alpha <- toupper(substr(tab$name, 1, 1))
 	tab$alpha[tab$alpha=="Ö"] <- "O"
-	tab
+	tab	
 }
 
 

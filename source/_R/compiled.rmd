@@ -63,8 +63,6 @@ carob_path = "../../../carob/"
 
 data_path = file.path(carob_path, "data/compiled")
 data_path2 = file.path(carob_path, "data")
-  
-#library(kableExtra)
 
 ff <- list.files(data_path, pattern=".*latest.*.csv$", full=TRUE)
 ff <- ff[!grepl("_all|_terms|_long|_warnings", ff)]
@@ -73,43 +71,71 @@ ff <- ff[!grepl("_all|_terms|_long|_warnings", ff)]
 sff <- gsub("_metadata", "_aaa", ff)
 ff <- ff[order(sff)]
 
-f <- grep(ff, pattern="_metadata.csv$", value=TRUE)
-
-groups <- gsub("_metadata.csv$", "", basename(f))
-groups <- gsub("^carob_|_latest$", "", groups)
-readcsv <- \(fn) {
-	csv <- data.table::fread(fn, sep=",", showProgress=FALSE)
-	csv[!grepl("_nodata$", csv$dataset_id), ]
+group_name <- function(fn) {
+	g <- basename(fn)
+	g <- sub("^carob_", "", g)
+	g <- sub("_latest_metadata\\.csv$", "", g)
+	g <- sub("_latest-cc\\.csv$", "", g)
+	g <- sub("_latest\\.csv$", "", g)
+	g
 }
 
-d <- lapply(f, readcsv)
+fmeta <- grep(ff, pattern="_metadata.csv$", value=TRUE)
+fdat <- grep(ff, pattern="_metadata", invert=TRUE, value=TRUE)
+fall <- grep(fdat, pattern="-cc", invert=TRUE, value=TRUE)
+fcc <- grep(fdat, pattern="-cc", value=TRUE)
+groups <- group_name(fmeta)
 
-n1 <- sapply(d, nrow)
-n2 <- sapply(d, \(i) sum(grepl("CC|ETALAB", i$license)))
+drop_nodata <- function(x) x[!grepl("_nodata$", x$dataset_id), ]
 
-f <- grep(ff, pattern="_metadata", invert=TRUE, value=TRUE)
-fall <- grep(f, pattern="-cc", invert=TRUE, value=TRUE)
-fcc <- grep(f, pattern="-cc", value=TRUE)
+meta <- lapply(fmeta, \(fn) {
+	drop_nodata(data.table::fread(fn, select=c("dataset_id", "carob_date", "license"),
+		showProgress=FALSE))
+})
+n1 <- sapply(meta, nrow)
+n2 <- sapply(meta, \(i) sum(grepl("CC|ETALAB", i$license)))
 
-dd <- lapply(fall, readcsv)
+dd <- lapply(fall, \(fn) {
+	drop_nodata(data.table::fread(fn,
+		select=c("dataset_id", "country", "longitude", "latitude"), showProgress=FALSE))
+})
 nr1 <- sapply(dd, nrow)
-ddcc <- lapply(fcc, readcsv)
-nr2 <- sapply(ddcc, nrow)
-grp2 <- gsub("-cc.csv$", "", basename(fcc))
-grp2 <- gsub("^carob_|_latest$", "", grp2)
 
-d <- data.frame(Group=grp2, `CC-Records`=nr2, check.names=FALSE)
+nr2 <- sapply(fcc, \(fn) {
+	nrow(drop_nodata(data.table::fread(fn, select="dataset_id", showProgress=FALSE)))
+})
+grp2 <- group_name(fcc)
 
 x <- data.frame(Group=groups, Datasets=n1, Records=nr1, `CC-Datasets`=n2, check.names=FALSE)
-x <- merge(x, d, by="Group", all.x=TRUE)
+x <- merge(x, data.frame(Group=grp2, `CC-Records`=nr2, check.names=FALSE), by="Group", all.x=TRUE)
 x[is.na(x)] <- 0
-xurl <- paste0("https://carob-data.org/reports/carob_",  x$Group, ".html")
+xurl <- paste0("https://carob-data.org/reports/carob_", x$Group, ".html")
 x$Group <- kableExtra::cell_spec(x$Group, "html", link=xurl)
 
-
-geo <- do.call(rbind, lapply(1:length(dd), \(i) data.frame(Group=groups[i], dd[[i]][, c("country", "longitude", "latitude")]))) |> unique()
+gdd <- group_name(fall)
+geo <- do.call(rbind, lapply(seq_along(dd), \(i) {
+	data.frame(Group=gdd[i], dd[[i]][, .(country, longitude, latitude)])
+})) |> unique()
 geo <- na.omit(geo)
 
+nrec <- data.table::rbindlist(lapply(dd, \(x) x[, .(records=.N), by=dataset_id]))
+mall <- data.table::rbindlist(meta)
+mall[, carob_date := as.Date(carob_date)]
+gdat <- nrec[mall, on="dataset_id"]
+gdat[is.na(records), records := 0L]
+
+byday <- gdat[, .(datasets=.N, records=sum(records)), by=.(date=carob_date)]
+data.table::setorder(byday, date)
+byday[, `:=`(cum_datasets=cumsum(datasets), cum_records=cumsum(records))]
+
+byyear <- gdat[, .(Datasets=.N, Records=sum(records)), by=.(Year=format(carob_date, "%Y"))]
+data.table::setorder(byyear, Year)
+byyear[, `:=`(
+	`Datasets (cumulative)`=cumsum(Datasets),
+	`Records (cumulative)`=cumsum(Records)
+)]
+data.table::setcolorder(byyear, c("Year", "Datasets", "Datasets (cumulative)",
+	"Records", "Records (cumulative)"))
 ```
 
 As of `r  cdate`, we have processed `r sum(x$Datasets)` original [data sets](done.html) containing a total of `r format(sum(x$Records), big.mark=",")` records. The map below shows all locations for which we have at least one observation, one thematic group at a time.
@@ -137,7 +163,36 @@ terra::lines(w, col="dark gray", lwd=1)
 terra::halo(-12000000, -6500000, paste("Carob locations\n  ", cdate), xpd=TRUE, cex=.6)
 ``` 
 
-<br>
+The figures below show the growth of *Carob* over time
+
+```{r growthplot, echo=FALSE, fig.width=6, fig.height=3}
+par(mfrow=c(1,2), mar=c(3.2, 4.6, 1.6, 0.8), mgp=c(2.6, 0.6, 0), las=1, bty="l")
+
+plot(byday$date, byday$cum_datasets, type="s", lwd=2, col="darkred",
+   xlab="", ylab="Datasets", yaxs="i",
+	ylim=c(0, max(byday$cum_datasets) * 1.05))
+#title("Cumulative datasets", adj=0, cex.main=1)
+grid()
+
+plot(byday$date, byday$cum_records / 1e6, type="s", lwd=2, col="darkred",
+	xlab="", ylab="Records (millions)", yaxs="i",
+	ylim=c(0, max(byday$cum_records) / 1e6 * 1.05))
+grid()
+#title("Cumulative records", adj=0, cex.main=1)
+```
+
+
+```{r yeartable, echo=FALSE}
+# Datasets and records added each year:
+#y <- as.data.frame(byyear)
+#y$Records <- format(y$Records, big.mark=" ", scientific=FALSE)
+#y$`Records (cumulative)` <- format(y$`Records (cumulative)`, big.mark=" ", scientific=FALSE)
+
+#knitr::kable(y, "html", align="lrrrr", escape=FALSE) |>
+#	kableExtra::kable_classic(full_width=FALSE) |>
+#	kableExtra::kable_styling(bootstrap_options=c("striped", "hover"))
+```
+
 
 For ease of organization we divide the data into thematic groups. These are not mutually exclusive. For example, the first place to look for crop response to fertilizer data would be in the "agronomy" group. However, the "survey", and "varieties_" groups may also contain fertilizer application data. Likewise, the "varieties_" groups have data for comparing crop varieties, but variety names are also reported in the "agronomy" group. This means that you may want to consider using data from multiple groups. Note that the "varieties_other" groups includes data from multiple crops, perhaps including crops that have their own varieties_* group (e.g. "varieties_wheat").
 
@@ -156,9 +211,11 @@ knitr::kable(x, "html", escape=FALSE, align = "lrrrr") |>
 ```
 </br>
 
-Below, you can download the compiled standardized data that come with a Creative Commons [license](licenses.html). You can create the full datasets yourself by following these [instructions](../compile.html). 
+Below, you can download the compiled standardized data that come with a Creative Commons [license](licenses.html). 
 
-You can download data by group, or, if you want all available data, select "everything". If you want data for a single data set, you can find these [here](done.html). You can use *R* package [caramba](https://github.com/carob-data/caramba) to integrate the data download into an *R* workflow. 
+You can download data by group, or, if you want all available data, select "everything". If you want data for a single data set, you can find these [here](done.html). You can use *R* package [caramba](https://github.com/carob-data/caramba) to integrate the data download into an *R* workflow -- including the data that do not havea a CC license.
+
+You can create the full datasets yourself by following these [instructions](../compile.html). 
 
 Please note that we have currently only partially processed much of the survey data, and the original data sources may contains many more variables. The data available here are our first attempt to standardize widely variable data with lots of data quality issues. The data still contain errors from the original data that remain, and likely also errors that we have introduced. 
 
