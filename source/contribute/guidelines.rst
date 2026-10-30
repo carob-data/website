@@ -19,7 +19,7 @@ Before you start
 
 	<li>When writing a new script, start by running the carobiner::draft` function for your dataset of interest.</li></br> 
 	
-	<li>If you are using AI, tell the agent to read [AGENTS.md](https://github.com/carob-data/carob/blob/main/AGENTS.md) (in the root of the repo). AI can be very helpful, but it cuts corners and requires supervision. You need to critically evaluate their work and push them to do better (or fix things yourself)</li></br> 
+	<li>If you are using AI, see <a href="./ai.html">Using AI</a>. Tell the agent to read <a href="https://github.com/carob-data/carob/blob/main/AGENTS.md">AGENTS.md</a> (in the root of the repo). AI can be very helpful, but it cuts corners and requires supervision. You need to critically evaluate their work and push them to do better (or fix things yourself).</li></br> 
 
 	<li><em>Carob</em> scripts are normally contributed and/or improved via a github pull request (PR). Before creating a pull request, make sure that your fork is synced, and that there are no conflicts. We strongly prefer PRs for a single file at a time.</li></br>
 	</ul>
