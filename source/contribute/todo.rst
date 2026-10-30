@@ -1,11 +1,13 @@
 To-do list
 ==========
 
-These datasets still need a script. The table is read from the `Carob repository <https://github.com/carob-data/carob>`_ each time this page is opened. Difficulty is the estimated effort to finish the draft script, from 1 (easy) to 5 (hard).
+These datasets still need a script. The table is read from the `Carob repository <https://github.com/carob-data/carob>`_ each time this page is opened. The same list is on the `GitHub to-do table <https://carob-data.github.io/carob/>`_.
 
 You can discover other data sets with the `Gardian <https://gardian.cgiar.org>`_ search engine, but do look at our `done list <../data/done.html>`_ before starting to work on a dataset, to make sure that it has not already been processed.
 
 Since there can be a delay in updating what is shown here, before you start working on a dataset, you should check with ``carobiner::on_github`` if it has already been done (and has been added to the github repo).
+
+Difficulty: estimated effort to finish the draft script, from 1 (easy) to 5 (hard), based on its stated completion, open issues and number of data files.
 
 .. raw:: html
 
@@ -42,13 +44,15 @@ Since there can be a delay in updating what is shown here, before you start work
      function sourceOf(row) {
        var author = String(row.author || "").trim().replace(/,\s*$/, "");
        var year = String(row.year_pub || "").trim();
-       var provider = String(row.provider || "").trim();
-       var lead = "";
-       if (author && year) lead = author + " (" + year + ")";
-       else if (author) lead = author;
-       else if (year) lead = "(" + year + ")";
-       if (lead && provider) return lead + ", " + provider;
-       return lead || provider;
+       if (author && year) return author + " (" + year + ")";
+       if (author) return author;
+       if (year) return "(" + year + ")";
+       return "";
+     }
+     function scriptHref(path) {
+       var p = String(path || "").trim().replace(/\\/g, "/").replace(/^\.\//, "");
+       if (!p) return "";
+       return REPO + p.split("/").map(encodeURIComponent).join("/");
      }
      function datasetCell(row) {
        var title = String(row.title || "").trim();
@@ -59,14 +63,9 @@ Since there can be a delay in updating what is shown here, before you start work
        if (href) html += " <a href=\"" + esc(href) + "\" target=\"_blank\" rel=\"noopener\">" + esc(uri) + "</a>";
        else if (uri) html += " " + esc(uri);
        if (source) html += (html ? ". " : "") + esc(source);
+       var scriptUrl = scriptHref(row.script);
+       if (scriptUrl) html += (html ? ". " : "") + "<a href=\"" + esc(scriptUrl) + "\" target=\"_blank\" rel=\"noopener\">draft script</a>";
        return html;
-     }
-     function scriptCell(path) {
-       var p = String(path || "").trim().replace(/\\/g, "/").replace(/^\.\//, "");
-       if (!p) return "";
-       var label = p.split("/").pop();
-       var href = REPO + p.split("/").map(encodeURIComponent).join("/");
-       return "<a href=\"" + esc(href) + "\" target=\"_blank\" rel=\"noopener\">" + esc(label) + "</a>";
      }
      function difficultyOf(v) {
        var s = String(v == null ? "" : v).trim();
@@ -91,12 +90,12 @@ Since there can be a delay in updating what is shown here, before you start work
          language: { lengthMenu: "Show _MENU_ items", infoFiltered: "" },
          columns: [
            { title: "Dataset", data: null, render: function (row) { return datasetCell(row); } },
-           { title: "Draft script", data: "script", render: function (path) { return scriptCell(path); } },
            { title: "Difficulty", data: "difficulty", className: "dt-body-center", render: function (v, type) {
              var n = difficultyOf(v);
              if (type === "sort" || type === "type") return n === "" ? -1 : n;
              return n === "" ? "" : String(n);
            } },
+           { title: "Provider", data: "provider", defaultContent: "" },
            { title: "Region", data: "region", defaultContent: "" },
            { title: "Crop", data: "crop", defaultContent: "" },
            { title: "Group", data: "group", defaultContent: "" }

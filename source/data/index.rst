@@ -24,6 +24,7 @@ Data
 		<option value="varieties_sorghum">varieties_sorghum</option>
 		<option value="varieties_wheat">varieties_wheat</option>
 		<option value="varieties_other">varieties_other</option>
+		<option value="weather">weather</option>
 		<option value="all">everything</option>
 	</select>
 

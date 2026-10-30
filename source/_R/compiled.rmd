@@ -165,7 +165,7 @@ terra::halo(-12000000, -6500000, paste("Carob locations\n  ", cdate), xpd=TRUE, 
 
 The figure below shows the growth of *Carob* over time:
 
-```{r growthplot, echo=FALSE, fig.width=4.5, fig.height=4}
+```{r growthplot, echo=FALSE, fig.width=4, fig.height=3.5, fig.align = 'center'}
 par(mar=c(4.2, 4.6, 0.6, 0.8), mgp=c(2.6, 0.6, 0), las=1, bty="l")
 
 #plot(byday$date, byday$cum_datasets, type="s", lwd=2, col="darkred",
@@ -177,9 +177,7 @@ par(mar=c(4.2, 4.6, 0.6, 0.8), mgp=c(2.6, 0.6, 0), las=1, bty="l")
 plot(byday$date, byday$cum_records / 1e6, type="s", lwd=2, col="darkred",
 	xlab="time", ylab="Records (millions)", yaxs="i",
 	ylim=c(0, max(byday$cum_records) / 1e6 * 1.05))
-x_ticks <- axTicks(1) # 1 = X-axis
-y_ticks <- axTicks(2) # 2 = Y-axis
-abline(v = x_ticks, h = y_ticks, col = "gray", lty = "dotted")	
+abline(v = as.Date(paste0(2022:2028, "-01-01")), h = 1:6, col = "gray", lty = "dotted")	
 #title("Cumulative records", adj=0, cex.main=1)
 ```
 
