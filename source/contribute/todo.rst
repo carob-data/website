@@ -1,13 +1,11 @@
 To-do list
 ==========
 
-These datasets still need a script. The table is read from the `Carob repository <https://github.com/carob-data/carob>`_ each time this page is opened. The same list is on the `GitHub to-do table <https://carob-data.github.io/carob/>`_.
+These table below lists datasets that do not have a complete script yet. Feel free to help out, but picking one and completing its **draft script**. 
 
-You can discover other data sets with the `Gardian <https://gardian.cgiar.org>`_ search engine, but do look at our `done list <../data/done.html>`_ before starting to work on a dataset, to make sure that it has not already been processed.
+You can also look for other data sets, for example with the `Gardian <https://gardian.cgiar.org>`_ search engine. Before starting to work on a dataset, make sure that it has not already been `done <../data/done.html>`_. Since there can be a delay in updating what is shown on this website, before you start working on a dataset, you should also check with ``carobiner::on_github`` if it has already been done (and has been added to the github repo).
 
-Since there can be a delay in updating what is shown here, before you start working on a dataset, you should check with ``carobiner::on_github`` if it has already been done (and has been added to the github repo).
-
-Difficulty: estimated effort to finish the draft script, from 1 (easy) to 5 (hard), based on its stated completion, open issues and number of data files.
+Each dataset has a draft script that you should start with. The difficulty score is an estimate of the effort needed to finish the draft script, from 1 (easy) to 5 (hard). The estimate is based on the scripts' stated completion, open issues and number of data files.
 
 .. raw:: html
 
@@ -63,8 +61,9 @@ Difficulty: estimated effort to finish the draft script, from 1 (easy) to 5 (har
        if (href) html += " <a href=\"" + esc(href) + "\" target=\"_blank\" rel=\"noopener\">" + esc(uri) + "</a>";
        else if (uri) html += " " + esc(uri);
        if (source) html += (html ? ". " : "") + esc(source);
-       var scriptUrl = scriptHref(row.script);
-       if (scriptUrl) html += (html ? ". " : "") + "<a href=\"" + esc(scriptUrl) + "\" target=\"_blank\" rel=\"noopener\">draft script</a>";
+       var scriptUrl = scriptHref(row.script);	   
+	   if (scriptUrl) html += (html ? ". " : "") + "<a href=\"" + esc(scriptUrl) + "\" target=\"_blank\" rel=\"noopener\" style=\"color: #990F2B;\"><strong>draft script</strong></a>";	   
+	   
        return html;
      }
      function difficultyOf(v) {
@@ -82,7 +81,8 @@ Difficulty: estimated effort to finish the draft script, from 1 (easy) to 5 (har
        var rows = (parsed.data || []).filter(function (row) {
          return row && String(row.title || row.uri || "").trim();
        });
-       status.textContent = rows.length.toLocaleString() + " datasets";
+	   //status.textContent = rows.length.toLocaleString() + " datasets";
+	   status.textContent = "";
        new DataTable("#todo-table", {
          data: rows,
          pageLength: 25,
@@ -106,3 +106,6 @@ Difficulty: estimated effort to finish the draft script, from 1 (easy) to 5 (har
      });
    })();
    </script>
+
+
+This table is also available on `GitHub <https://carob-data.github.io/carob/>`_.

@@ -21,7 +21,7 @@ To contribute you can follow these steps
 
 If you are not familiar with these procedures you can try to follow `these instructions <./git.html>`__. 
 
-If you find this procedure too daunting we can also try to work with you in other ways. You can drop us an email at carob.data@gmail.com, or raise an `issue <https://github.com/carob-data/carob/issues>`_ on github.
+If you find this procedure too daunting we can also try to work with you in other ways. You can write to us using this `contact form <../contact.html>`__, or raise an `issue <https://github.com/carob-data/carob/issues>`_ on github.
 
 You can discover new data sets with the `Gardian <https://gardian.cgiar.org>`_ search engine. You can also look at our `to-do list <./todo.html>`__ for ideas. You can check our `done list <../data/done.html>`_ to make sure you do not work on a dataset that has already been processed). But since there can be a delay in updating what is shown here, before you start working on a dataset, you should check with ``carobiner::on_github`` if it has already been done (and has been added to the github repo). You can also help fix some of the remaining `issues <./issues.html>`__.
 
